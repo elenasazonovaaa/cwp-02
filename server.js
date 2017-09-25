@@ -22,6 +22,7 @@ client.on('data', function(data,err){
                client.id = Date.now() + seed++;
                console.log(' +++ '+'Client-'+ client.id);
                client.write('ASC');
+               fs.writeFile(client.id+`.txt`,`Client ${client.id} is connect\r\n`,(err)=>{if(err) console.log('Err in create LOG');});
                getJSON();
        }
    }
@@ -40,10 +41,16 @@ client.on('data',function (data,err) {
                     if(Date.now()%2 === 0)
                     {
                         client.write(correct[i].toString());
+                        fs.appendFile(client.id+`.txt`,
+                            'Questions: '+ questions[i].toString()+ `\r\n` + 'Answer: '+ correct[i].toString()+ `\r\n` ,
+                            (err)=>{if(err) console.log('Err in create LOG');});
                     }
                     else
                     {
                         client.write(incorrect[i].toString());
+                        fs.appendFile(client.id+`.txt`,
+                            'Questions: '+ questions[i].toString()+ `\r\n` + 'Answer: '+ incorrect[i].toString()+ `\r\n`,
+                            (err)=>{if(err) console.log('Err in create LOG');});
                     }
                     flag = true;
                 }
@@ -56,7 +63,13 @@ client.on('data',function (data,err) {
 
 client.on('end', function(){
     if(client.id === undefined) console.log(' --- '+'no connect for Client');
-    else console.log(' --- '+'Client-' + client.id);} );
+    else
+    {
+        fs.appendFile(client.id+`.txt`,'Client disconnected :)',(err)=>{if(err) console.log('Err in create LOG');});
+        console.log(' --- '+'Client-' + client.id);
+    }
+    } );
+
 });
 
 server.listen(port, () => {
