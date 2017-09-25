@@ -1,18 +1,20 @@
 // server.js
 const net = require('net');
 const port = 8124;
-
-const server = net.createServer((client) => {
-    console.log('Client connected');
+var seed = 0;
+const server = net.createServer(function(client){
 
 client.setEncoding('utf8');
+client.id = Date.now() + seed++;
+
+console.log(' +++ '+'Client-'+ client.id);
 
 client.on('data', (data) => {
     console.log(data);
-client.write('\r\nHello!\r\nRegards,\r\nServer\r\n');
+client.write('Hello - '+client.id);
 });
 
-client.on('end', () => console.log('Client disconnected'));
+client.on('end', () => console.log(' --- '+'Client-' + client.id));
 });
 server.listen(port, () => {
     console.log(`Server listening on localhost:${port}`);
